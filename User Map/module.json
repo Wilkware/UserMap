@@ -1,0 +1,15 @@
+{
+    "id": "{9473EFBC-35B7-89E9-5A7A-0644BDABAF7B}",
+    "name": "User Map",
+    "type": 3,
+    "vendor": "",
+    "aliases": [
+        "UserMap",
+        "Benutzerkarte"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "SUM",
+    "url": "https://github.com/Wilkware/UserMap"
+}
