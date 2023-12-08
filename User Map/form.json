@@ -125,7 +125,7 @@
                     "type": "Button",
                     "name": "btnRegister",
                     "caption": "Register",
-                    "onClick": "IPS_RequestAction($id,'usermap', 'register');",
+                    "onClick": "IPS_RequestAction($id,'map', 'register');",
                     "visible": true,
                     "enabled": false
                 },
@@ -133,7 +133,7 @@
                     "type": "Button",
                     "name": "btnUpdate",
                     "caption": "Update",
-                    "onClick": "IPS_RequestAction($id,'usermap', 'update');",
+                    "onClick": "IPS_RequestAction($id,'map', 'update');",
                     "visible": true,
                     "enabled": false
                 },
@@ -141,7 +141,7 @@
                     "type": "Button",
                     "name": "btnDelete",
                     "caption": "Delete",
-                    "onClick": "IPS_RequestAction($id,'usermap', 'delete');",
+                    "onClick": "IPS_RequestAction($id,'map', 'delete');",
                     "visible": true,
                     "enabled": false
                 }

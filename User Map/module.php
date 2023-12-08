@@ -105,8 +105,8 @@ class UserMap extends IPSModule
         // Debug output
         $this->SendDebug(__FUNCTION__, $ident . ' => ' . $value);
         switch ($ident) {
-            case 'usermap':
-                $this->Usermap($value);
+            case 'map':
+                $this->Map($value);
                 break;
             case 'copy':
                 $this->Copy($value);
@@ -149,7 +149,7 @@ class UserMap extends IPSModule
      *
      * @param bool $value False for transition otherwise true
      */
-    private function Usermap($value)
+    private function Map($value)
     {
         $this->SendDebug(__FUNCTION__, $value);
         // check instance state
