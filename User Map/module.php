@@ -121,9 +121,9 @@ class UserMap extends IPSModule
     /**
      * Reset my registered marker
      *
-     * @param mixed $id new User/Post ID
+     * @param int $id new User/Post ID
      */
-    public function ResetMyMarker($uid)
+    public function ResetMyMarker(int $uid)
     {
         $old = $this->ReadAttributeInteger('UserID');
         if ($uid >= 0) {
@@ -147,9 +147,9 @@ class UserMap extends IPSModule
     /**
      * Register, update or delete user map infos.
      *
-     * @param bool $value False for transition otherwise true
+     * @param string $value False for transition otherwise true
      */
-    private function Map($value)
+    private function Map(string $value)
     {
         $this->SendDebug(__FUNCTION__, $value);
         // check instance state
@@ -182,20 +182,28 @@ class UserMap extends IPSModule
         $url = self::WP_REST_URL . '?' . $value . '=' . $id;
         //$this->SendDebug(__FUNCTION__, 'Request: ' . $url);
         $response = $this->Request($url, $headers, $request);
-        $text = $this->Translate('Error when calling the function!');
+        $text = 'Error when calling the function!';
         if ($response !== false) {
             $data = json_decode($response, true);
             if (isset($data['ID'])) {
-                $this->WriteAttributeInteger('UserID', $data['ID']);
-                if (($value == 'delete') || ($data['ID'] != 0)) {
-                    $text = $this->Translate('Function successfully executed!');
+                // Register successful?
+                if (($value == 'register') && ($data['ID'] != 0)) {
+                    $this->WriteAttributeInteger('UserID', $data['ID']);
+                    $text = 'Function successfully executed!';
+                }
+                elseif (($value == 'delete') && ($data['ID'] == 0)) {
+                    $this->WriteAttributeInteger('UserID', $data['ID']);
+                    $text = 'Function successfully executed!';
+                }
+                elseif (($value == 'update') && ($data['ID'] != 0)) {
+                    $text = 'Function successfully executed!';
                 }
             }
         }
         // Update Buttons
         $this->ToggleButtons();
-        // Output Message
-        echo $text;
+        // Echo message
+        $this->EchoMessage($text);
     }
 
     /**
@@ -203,7 +211,7 @@ class UserMap extends IPSModule
      *
      * @param bool $value No usage
      */
-    private function Copy($value)
+    private function Copy(bool $value)
     {
         $this->SendDebug(__FUNCTION__, $value);
         $location = $this->GetLocationData();
@@ -212,7 +220,7 @@ class UserMap extends IPSModule
             $this->UpdateFormField('Coords', 'value', $location);
         }
         else {
-            echo $this->Translate('No location data available!');
+            $this->EchoMessage('No location data available!');
         }
     }
 
@@ -269,4 +277,14 @@ class UserMap extends IPSModule
         return $response;
     }
 
+    /**
+     * Show message via popup
+     *
+     * @param string $caption echo message
+     */
+    private function EchoMessage(string $caption)
+    {
+        $this->UpdateFormField('EchoMessage', 'caption', $this->Translate($caption));
+        $this->UpdateFormField('EchoPopup', 'visible', true);
+    }
 }

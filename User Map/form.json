@@ -103,7 +103,7 @@
                             "add": "",
                             "edit": {
                                 "type": "ValidationTextBox",
-                                "validate": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$"
+                                "validate": "^(https?://)([a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5})(:[0-9]{1,5})?(/.*)?$"
                             }
                         }
                     ]
@@ -146,6 +146,20 @@
                     "enabled": false
                 }
             ]
+        },
+        {
+            "name": "EchoPopup",
+            "type": "PopupAlert",
+            "visible": false,
+            "popup": {
+                "items": [
+                    {
+                        "type": "Label",
+                        "name": "EchoMessage",
+                        "caption": ""
+                    }
+                ]
+            }
         },
         {
             "type": "ExpansionPanel",
