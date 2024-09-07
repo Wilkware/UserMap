@@ -1,6 +1,7 @@
 {
     "translations": {
         "de": {
+            "User Map": "Benutzerkarte",
             "\nSymcon User Map\n ": "\nSymcon Benutzerkarte\n ",
             "The module offers the option of adding each Symcon user's own location marker to the user map directly from the console.": "Das Modul bietet die Möglichkeit, jedem Symcon-Benutzer direkt von der Konsole aus seinen eigenen Standortmarker auf einer globalen Karte (Website) hinzuzufügen.",
             "User data ...": "Benutzerdaten ...",

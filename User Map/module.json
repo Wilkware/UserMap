@@ -1,13 +1,10 @@
 {
     "id": "{9473EFBC-35B7-89E9-5A7A-0644BDABAF7B}",
     "name": "User Map",
-    "url": "https://github.com/Wilkware/UserMap",
+    "url": "https://wilkware.de/ip-symcon-module/benutzerkarte/",
     "type": 3,
     "vendor": "",
-    "aliases": [
-        "UserMap",
-        "Benutzerkarte"
-    ],
+    "aliases": [],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
