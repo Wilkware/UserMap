@@ -10,26 +10,30 @@
                     "onClick": "echo 'https://sum.asmium.de';"
                 },
                 {
-                    "type": "Label",
-                    "label": "\nSymcon User Map\n ",
-                    "link": false,
-                    "bold": true
+                    "type": "ColumnLayout",
+                    "items": [
+                        {
+                            "type": "Label",
+                            "label": "Symcon User Map",
+                            "bold": true
+                        },
+                        {
+                            "type": "Label",
+                            "label": "The module offers the option of adding each Symcon user's own location marker to the user map directly from the console."
+                        }
+                    ]
                 }
             ]
         },
         {
-            "type": "Label",
-            "label": "The module offers the option of adding each Symcon user's own location marker to the user map directly from the console."
-        },
-        {
             "type": "ExpansionPanel",
-            "caption": "User data ...",
+            "caption": "🙋 User data ...",
             "expanded": true,
             "items": [
                 {
                     "type": "ValidationTextBox",
                     "name": "Name",
-                    "caption": "User name (forum)",
+                    "caption": "User name (forum):",
                     "validate": "^[a-zA-Z0-9\\._-]{3,16}$",
                     "width": "300px"
                 },
@@ -39,7 +43,7 @@
                         {
                             "type": "SelectLocation",
                             "name": "Coords",
-                            "caption": "Location"
+                            "caption": "Location:"
                         },
                         {
                             "type": "Button",
@@ -53,7 +57,7 @@
                 {
                     "type": "List",
                     "name": "Links",
-                    "caption": "Links (optional)",
+                    "caption": "Links (optional):",
                     "add": true,
                     "delete": true,
                     "changeOrder": true,
@@ -113,37 +117,37 @@
     ],
     "actions": [
         {
-            "type": "Label",
-            "name": "lblManage",
-            "caption": "Manage your marker via the buttons ...",
-            "visible": true
-        },
-        {
-            "type": "RowLayout",
+            "type": "ExpansionPanel",
+            "caption": "🗝️ Manage your marker via the buttons ...",
             "items": [
                 {
-                    "type": "Button",
-                    "name": "btnRegister",
-                    "caption": "Register",
-                    "onClick": "IPS_RequestAction($id,'map', 'register');",
-                    "visible": true,
-                    "enabled": false
-                },
-                {
-                    "type": "Button",
-                    "name": "btnUpdate",
-                    "caption": "Update",
-                    "onClick": "IPS_RequestAction($id,'map', 'update');",
-                    "visible": true,
-                    "enabled": false
-                },
-                {
-                    "type": "Button",
-                    "name": "btnDelete",
-                    "caption": "Delete",
-                    "onClick": "IPS_RequestAction($id,'map', 'delete');",
-                    "visible": true,
-                    "enabled": false
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "name": "btnRegister",
+                            "caption": "Register",
+                            "onClick": "IPS_RequestAction($id,'map', 'register');",
+                            "visible": true,
+                            "enabled": false
+                        },
+                        {
+                            "type": "Button",
+                            "name": "btnUpdate",
+                            "caption": "Update",
+                            "onClick": "IPS_RequestAction($id,'map', 'update');",
+                            "visible": true,
+                            "enabled": false
+                        },
+                        {
+                            "type": "Button",
+                            "name": "btnDelete",
+                            "caption": "Delete",
+                            "onClick": "IPS_RequestAction($id,'map', 'delete');",
+                            "visible": true,
+                            "enabled": false
+                        }
+                    ]
                 }
             ]
         },
@@ -163,7 +167,7 @@
         },
         {
             "type": "ExpansionPanel",
-            "caption": "Source code, donation and licence ...",
+            "caption": "🎗️ Source code, donation and licence ...",
             "items": [
                 {
                     "type": "Label",
@@ -189,6 +193,10 @@
                             "onClick": "echo 'https://creativecommons.org/licenses/by-nc-sa/4.0/';"
                         }
                     ]
+                },
+                {
+                    "type": "Label",
+                    "color": 8421504
                 }
             ]
         }

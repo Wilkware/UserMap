@@ -2,28 +2,46 @@
 
 declare(strict_types=1);
 
-// Allgemeine Funktionen
+/** Generell funktions */
 require_once __DIR__ . '/../libs/_traits.php';
 
 /**
- * CLASS UserMap
+ * Class UserMap
  */
-class UserMap extends IPSModule
+class UserMap extends IPSModuleStrict
 {
+    // -------------------------------------------------------------------------
+    // Traits
+    // -------------------------------------------------------------------------
+
     use DebugHelper;
     use ProfileHelper;
     use VariableHelper;
 
-    // ModulID (Location Control)
+    // -------------------------------------------------------------------------
+    // Constants
+    // -------------------------------------------------------------------------
+
+    /** @var string ModulID (Location Control)  */
     private const LOCATION_CONTROL_GUID = '{45E97A63-F870-408A-B259-2933F7EABF74}';
-    // WP REST API
+
+    /** @var string Wordpress REST API Url */
     private const WP_REST_URL = 'https://wilkware.de/wp-json/usermap/symcon';
+
+    /** @var string Wordpress REST API Apw */
     private const WP_REST_APW = 'YXBwLnVzZXI6YXZDUSByMDNPIEU1Q1AgMUJFeiBOUDVKIGxtUVY=';
 
+    // -------------------------------------------------------------------------
+    // Methods
+    // -------------------------------------------------------------------------
+
     /**
-     * Overrides the internal IPSModule::Create($id) function
+     * In contrast to Construct, this function is called only once when creating the instance and starting IP-Symcon.
+     * Therefore, status variables and module properties which the module requires permanently should be created here.
+     *
+     * @return void
      */
-    public function Create()
+    public function Create(): void
     {
         //Never delete this line!
         parent::Create();
@@ -35,26 +53,40 @@ class UserMap extends IPSModule
         $this->RegisterPropertyString('Coords', '{"latitude":0,"longitude":0}');
         // Link List
         $this->RegisterPropertyString('Links', '[]');
+
+        // Set visualization type to 1, as we want to offer HTML
+        $this->SetVisualizationType(1);
     }
 
     /**
-     * Overrides the internal IPSModule::Destroy($id) function
+     * This function is called when deleting the instance during operation and when updating via "Module Control".
+     * The function is not called when exiting IP-Symcon.
+     *
+     * @return void
      */
-    public function Destroy()
+    public function Destroy(): void
     {
         //Never delete this line!
         parent::Destroy();
     }
 
     /**
-     * Configuration Form.
+     * The content can be overwritten in order to transfer a self-created configuration page.
+     * This way, content can be generated dynamically.
+     * In this case, the "form.json" on the file system is completely ignored.
      *
-     * @return JSON configuration string.
+     * @return string Content of the configuration page.
      */
-    public function GetConfigurationForm()
+    public function GetConfigurationForm(): string
     {
         // Get Form
         $form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+
+        // Extract Version
+        $ins = IPS_GetInstance($this->InstanceID);
+        $mod = IPS_GetModule($ins['ModuleInfo']['ModuleID']);
+        $lib = IPS_GetLibrary($mod['LibraryID']);
+        $form['actions'][2]['items'][2]['caption'] = sprintf('v%s.%d', $lib['Version'], $lib['Build']);
 
         $uid = $this->ReadAttributeInteger('UserID');
         $name = $this->ReadPropertyString('Name');
@@ -63,30 +95,32 @@ class UserMap extends IPSModule
         if ($uid != 0) {
             // Update
             if (($name != '') && ($coords['latitude'] != 0) && ($coords['longitude'] != 0)) {
-                $form['actions'][1]['items'][1]['enabled'] = true;
+                $form['actions'][0]['items'][0]['items'][1]['enabled'] = true;
             }
             // Delete
-            $form['actions'][1]['items'][2]['enabled'] = true;
+            $form['actions'][0]['items'][0]['items'][2]['enabled'] = true;
         } else {
             if (($name != '') && ($coords['latitude'] != 0) && ($coords['longitude'] != 0)) {
-                $form['actions'][1]['items'][0]['enabled'] = true;
+                $form['actions'][0]['items'][0]['items'][0]['enabled'] = true;
             }
         }
-        //$this->SendDebug(__FUNCTION__, $form);
+        //$this->LogDebug(__FUNCTION__, $form);
         return json_encode($form);
     }
 
     /**
-     * Overrides the internal IPSModule::ApplyChanges($id) function
+     * Is executed when "Apply" is pressed on the configuration page and immediately after the instance has been created.
+     *
+     * @return void
      */
-    public function ApplyChanges()
+    public function ApplyChanges(): void
     {
         //Never delete this line!
         parent::ApplyChanges();
 
         $name = $this->ReadPropertyString('Name');
         $coords = json_decode($this->ReadPropertyString('Coords'), true);
-        $this->SendDebug(__FUNCTION__, 'Name: ' . $name . ', Lat:' . $coords['latitude'] . ', Lon:' . $coords['longitude']);
+        $this->LogDebug(__FUNCTION__, 'Name: ' . $name . ', Lat:' . $coords['latitude'] . ', Lon:' . $coords['longitude']);
         if (($name == '') || ($coords['latitude'] == 0) || ($coords['longitude'] == 0)) {
             $this->SetStatus(201);
         } else {
@@ -95,15 +129,17 @@ class UserMap extends IPSModule
     }
 
     /**
-     * RequestAction.
+     * Is called when, for example, a button is clicked in the visualization.
      *
-     *  @param string $ident Ident.
-     *  @param string $value Value.
+     * @param string $ident Ident of the variable
+     * @param mixed $value The value to be set
+     *
+     * @return void
      */
-    public function RequestAction($ident, $value)
+    public function RequestAction(string $ident, mixed $value): void
     {
         // Debug output
-        $this->SendDebug(__FUNCTION__, $ident . ' => ' . $value);
+        $this->LogDebug(__FUNCTION__, $ident . ' => ' . $value);
         switch ($ident) {
             case 'map':
                 $this->Map($value);
@@ -112,31 +148,54 @@ class UserMap extends IPSModule
                 $this->Copy($value);
                 break;
             default:
-                // ERROR!!!
+                $this->LogDebug(__FUNCTION__, 'There was no reaction to the action.');
                 break;
         }
-        return true;
+
+        // Send a complete update message to the display, as parameters may have changed
+        // $this->UpdateVisualizationValue($this->GetFullUpdateMessage());
+        return;
     }
 
     /**
      * Reset my registered marker
      *
-     * @param int $id new User/Post ID
+     * @param int $uid new User/Post ID
+     *
+     * @return int Returns the previous ID
      */
-    public function ResetMyMarker(int $uid)
+    public function ResetMyMarker(int $uid): int
     {
-        $old = $this->ReadAttributeInteger('UserID');
+        $oid = $this->ReadAttributeInteger('UserID');
         if ($uid >= 0) {
             $this->WriteAttributeInteger('UserID', $uid);
         }
-        return $old;
+        return $oid;
+    }
+
+    /**
+     * If the HTML-SDK is to be used, this function must be overwritten in order to return the HTML content.
+     *
+     * @return string Initial display of a representation via HTML SDK
+     */
+    public function GetVisualizationTile(): string
+    {
+        // Add a script to set the values when loading, analogous to changes at runtime
+        // Although the return from GetFullUpdateMessage is already JSON-encoded, json_encode is still executed a second time
+        // This adds quotation marks to the string and any quotation marks within it are escaped correctly
+        $handling = '<script>handleMessage(' . json_encode($this->GetFullUpdateMessage()) . ');</script>';
+        // Add static HTML from file
+        $module = file_get_contents(__DIR__ . '/module.html');
+        // Important: $initialHandling at the end, as the handleMessage function is only defined in the HTML
+        return $module . $handling;
     }
 
     /**
      * Hide/unhide form buttons.
      *
+     * @return void
      */
-    private function ToggleButtons()
+    private function ToggleButtons(): void
     {
         $uid = $this->ReadAttributeInteger('UserID');
         $this->UpdateFormField('btnRegister', 'enabled', ($uid == 0));
@@ -148,13 +207,15 @@ class UserMap extends IPSModule
      * Register, update or delete user map infos.
      *
      * @param string $value False for transition otherwise true
+     *
+     * @return void
      */
-    private function Map(string $value)
+    private function Map(string $value): void
     {
-        $this->SendDebug(__FUNCTION__, $value);
+        $this->LogDebug(__FUNCTION__, $value);
         // check instance state
         if ($this->GetStatus() != 102) {
-            $this->SendDebug(__FUNCTION__, 'Status: Instance is not active.');
+            $this->LogDebug(__FUNCTION__, 'Status: Instance is not active.');
             return;
         }
         // prepeare header
@@ -180,7 +241,7 @@ class UserMap extends IPSModule
         // Action
         $id = $this->ReadAttributeInteger('UserID');
         $url = self::WP_REST_URL . '?' . $value . '=' . $id;
-        //$this->SendDebug(__FUNCTION__, 'Request: ' . $url);
+        //$this->LogDebug(__FUNCTION__, 'Request: ' . $url);
         $response = $this->Request($url, $headers, $request);
         $text = 'Error when calling the function!';
         if ($response !== false) {
@@ -210,12 +271,14 @@ class UserMap extends IPSModule
      * Copy the location data from the system in the form.
      *
      * @param bool $value No usage
+     *
+     * @return void
      */
-    private function Copy(bool $value)
+    private function Copy(bool $value): void
     {
-        $this->SendDebug(__FUNCTION__, $value);
+        $this->LogDebug(__FUNCTION__, $value);
         $location = $this->GetLocationData();
-        $this->SendDebug(__FUNCTION__, $location);
+        $this->LogDebug(__FUNCTION__, $location);
         if (!empty($location)) {
             $this->UpdateFormField('Coords', 'value', $location);
         }
@@ -227,9 +290,9 @@ class UserMap extends IPSModule
     /**
      * Returns the users location data stored in symcon.
      *
-     * @return array location data
+     * @return string location data
      */
-    private function GetLocationData()
+    private function GetLocationData(): string
     {
         $ids = IPS_GetInstanceListByModuleID(self::LOCATION_CONTROL_GUID);
         foreach ($ids as $id) {
@@ -239,22 +302,21 @@ class UserMap extends IPSModule
         return '';
     }
 
-    /*
-     * Request - Sends the request to the device
+    /**
+     * Sends the request to the device
      *
      * If $request not null, we will send a POST request, else a GET request.
      * Over the $method parameter can we force a POST or GET request!
      *
      * @param string $url Url to call
-     * @param array $header Header information
+     * @param list<string> $headers Header information
      * @param string $request Request data
-     * @param string $mehtod 'GET' od 'POST'
+     * @param string $method 'GET' or 'POST'
+     *
      * @return mixed response data or false.
      */
     private function Request(string $url, array $headers, ?string $request, string $method = 'GET')
     {
-        //$this->SendDebug(__FUNCTION__, $url, 0);
-        //$this->SendDebug(__FUNCTION__, $headers, 0);
         // prepeare curl call
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -270,19 +332,35 @@ class UserMap extends IPSModule
 
         if (!$response = curl_exec($curl)) {
             $error = sprintf('Request failed for URL: %s - Error: %s', $url, curl_error($curl));
-            $this->SendDebug(__FUNCTION__, $error, 0);
+            $this->LogDebug(__FUNCTION__, $error);
         }
         curl_close($curl);
-        $this->SendDebug(__FUNCTION__, $response, 0);
+        $this->LogDebug(__FUNCTION__, $response);
         return $response;
+    }
+
+    /**
+     * Generate a message that updates all elements in the HTML display.
+     *
+     * @return string JSON encoded message information
+     */
+    private function GetFullUpdateMessage(): string
+    {
+        // Fill resultset
+        $result = [];
+        $this->LogDebug(__FUNCTION__, $result);
+        // send it
+        return json_encode($result);
     }
 
     /**
      * Show message via popup
      *
      * @param string $caption echo message
+     *
+     * @return void
      */
-    private function EchoMessage(string $caption)
+    private function EchoMessage(string $caption): void
     {
         $this->UpdateFormField('EchoMessage', 'caption', $this->Translate($caption));
         $this->UpdateFormField('EchoPopup', 'visible', true);

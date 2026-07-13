@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <title>Symcon User Map</title>
+    <link rel=stylesheet href=https://sum.asmium.de/css/style.css>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <div id=map
+        class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom">
+        <div class=leaflet-control-container>
+            <div class="leaflet-top leaflet-right">
+                <div class="leaflet-control-attribution leaflet-control"><span id=user-count>0</span> Nutzer sind schon
+                    registriert! | <a href=https://community.symcon.de/ title="Zu dieser Karte beitragen">🏠 Mitmachen
+                        🙏</a></div>
+            </div>
+        </div>
+    </div>
+    <ul id=userlist></ul>
+    <script>fetch("https://wilkware.de/wp-json/usermap/symcon/").then(e => e.json()).then(e => { var t, o, r, i = 5, n = L.map("map").setView([52, 13], i); n.options.minZoom = 3, L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Powered by <a href="https://wilkware.de">Wilkware</a>' }).addTo(n); const s = {}, a = []; for (const t of e) { if (o = "<h1>" + t.name + "</h1>", t.links) { r = !0; for (const e in t.links) r || (o += "<br>"), o += '<a target="_blank" href="' + t.links[e] + '">' + e + "</a>", r = !1 } const i = L.marker(t.coords).addTo(n).bindPopup(o); s[t.name] = i, a.push(t.name) } document.getElementById("user-count").innerText = String(e.length), a.sort(function (e, t) { return e.toLowerCase().localeCompare(t.toLowerCase()) }); let c = document.getElementById("userlist"); for (const e of a) t = document.createElement("li"), t.innerText = e, t.addEventListener("mouseenter", function () { s[e].openPopup() }), t.addEventListener("mouseleave", function () { s[e].closePopup() }), t.addEventListener("mousedown", function () { i = n.getZoom(), n.flyTo(s[e].getLatLng(), 16) }), t.addEventListener("mouseup", function () { n.flyTo(s[e].getLatLng(), i) }), c.appendChild(t) })</script>
+</body>
+
+</html>

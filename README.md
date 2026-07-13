@@ -1,12 +1,12 @@
-# Benutzerkarte (User Map)
+# 🗺️ Benutzerkarte (User Map)
 
 [![Version](https://img.shields.io/badge/Symcon-PHP--Modul-red.svg?style=flat-square)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Product](https://img.shields.io/badge/Symcon%20Version-6.4-blue.svg?style=flat-square)](https://www.symcon.de/produkt/)
-[![Version](https://img.shields.io/badge/Modul%20Version-1.0.20231206-orange.svg?style=flat-square)](https://github.com/Wilkware/UserMap)
+[![Product](https://img.shields.io/badge/Symcon%20Version-8.1-blue.svg?style=flat-square)](https://www.symcon.de/produkt/)
+[![Version](https://img.shields.io/badge/Modul%20Version-2.0.20260713-orange.svg?style=flat-square)](https://github.com/Wilkware/UserMap)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Actions](https://img.shields.io/github/actions/workflow/status/wilkware/UserMap/style.yml?branch=main&label=CheckStyle&style=flat-square)](https://github.com/Wilkware/UserMap/actions)
+[![Actions](https://img.shields.io/github/actions/workflow/status/wilkware/UserMap/ci.yml?branch=main&label=CI&style=flat-square)](https://github.com/Wilkware/UserMap/actions)
 
-Das Modul bietet die Möglichkeit, jedem Symcon-Benutzer direkt von der Konsole aus seinen eigenen Standortmarker auf einer globalen Karte (Symcon User Map Website) hinzuzufügen.  
+Das Modul bietet die Möglichkeit, jedem Symcon-Benutzer direkt von der Konsole aus seinen eigenen Standortmarker auf eine interaktive Karte (Symcon User Map) hinzuzufügen.  
 
 ## Inhaltverzeichnis
 
@@ -14,40 +14,41 @@ Das Modul bietet die Möglichkeit, jedem Symcon-Benutzer direkt von der Konsole 
 2. [Voraussetzungen](#user-content-2-voraussetzungen)
 3. [Installation](#user-content-3-installation)
 4. [Einrichten der Instanzen in IP-Symcon](#user-content-4-einrichten-der-instanzen-in-ip-symcon)
-5. [Statusvariablen und Profile](#user-content-5-statusvariablen-und-profile)
+5. [Statusvariablen und Darstellungen](#user-content-5-statusvariablen-und-darstellungen)
 6. [Visualisierung](#user-content-6-visualisierung)
 7. [PHP-Befehlsreferenz](#user-content-7-php-befehlsreferenz)
 8. [Versionshistorie](#user-content-8-versionshistorie)
 
 ### 1. Funktionsumfang
 
-Die Idee für das Modul stammt aus dem alten Symcon Forum bzw. aus dem HomeMatic Forum. Dort hat man es einfach und pragmatisch mit Google Maps umgesetzt. Der Nachteil ist das man es immer mit Nachrichten hin und her verwaltet hat.  
-Diese Ansatz kombiniert verschiedene Technologien um ein einfaches und selbst managebares Verfahren zum Verwalten des eigenen Standorts zu bieten.  
+Die Idee für dieses Modul stammt aus dem ehemaligen Symcon-Forum sowie aus dem HomeMatic-Forum. Dort wurde eine ähnliche Lösung bereits auf einfache und pragmatische Weise mit Google Maps umgesetzt. Der Nachteil dieser Variante war jedoch, dass die Standortdaten über Nachrichten zwischen den Systemen ausgetauscht und verwaltet werden mussten.  
+Dieser Ansatz kombiniert verschiedene Technologien, um eine moderne, einfache und selbst verwaltbare Lösung für die Verwaltung eigener Standorte bereitzustellen. Ziel ist es, eine flexible Standortdarstellung zu ermöglichen, ohne auf externe Verwaltungsdienste oder komplizierte manuelle Prozesse angewiesen zu sein.
 
-* Auslieferung über eine sehr schlanken One-Pager via CDN (netlify)
-* Registrieren, Aktualisieren und Löschen über eine einfache REST API
-* Redaktinelle Möglichkeit bei Fehlern schnell einzugreifen
-* Verwaltung des eigenen Standorts und privater Links via Symcon Modul
+* Auslieferung als schlanker One-Pager über CDN (Netlify) für die externe Website
+* Integrierte Unterstützung für die Kachelvisualisierung (Tile-Visu) in Symcon
+* Registrieren, Aktualisieren und Löschen der Standortdaten über eine einfache REST-API
+* Redaktionelle Möglichkeit, bei Fehlern oder Problemen schnell einzugreifen
+* Verwaltung des eigenen Standorts sowie privater Links über das Symcon Modul
 
 ### 2. Voraussetzungen
 
-* IP-Symcon ab Version 6.4
+* IP-Symcon ab Version 8.1
 
 ### 3. Installation
 
-* Über den Modul Store das Modul _User Map_ installieren.
+* Über den Modul Store das Modul __Benutzerkarte (engl. _User Map_) installieren.
 * Alternativ Über das Modul-Control folgende URL hinzufügen.  
 `https://github.com/Wilkware/UserMap` oder `git://github.com/Wilkware/UserMap.git`
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
-* Unter 'Instanz hinzufügen' ist das _User Map_-Modul (Alias: _Benutzerkarte_) unter dem Hersteller '(Geräte)' aufgeführt.
+* Unter 'Instanz hinzufügen' ist das _Benutzerkarte_-Modul unter dem Hersteller '(Geräte)' aufgeführt.
 
 __Konfigurationsseite__:
 
 Einstellungsbereich:
 
-> Benutzerdaten ...
+> 🙋 Benutzerdaten ...
 
 Name                               | Beschreibung
 ---------------------------------- | -----------------------------------------------------------------
@@ -57,25 +58,37 @@ Links (nicht verpflichend)         | Wer will kann mehrere Links zu seiner Perso
 
 _Aktionsbereich:_
 
+> 🗝️ Verwalten Sie Ihren Eintrag über die Schaltflächen ...
+
 Aktion                  | Beschreibung
 ----------------------- | ---------------------------------
 REGISTRIEREN            | Den eigenen Standort freigeben bzw. registrieren
 AKTUALISIEREN           | Update der daten, z.B. neuer Standort oder Links. ÄNDERUNG DES NAMENS IST NICHT ERLAUBT!
 LÖSCHEN                 | Standort wieder zurücknehmen bzw. öffentlich Löschen!
 
-### 5. Statusvariablen und Profile
+### 5. Statusvariablen und Darstellungen
 
-Es werden keine zusätzlichen Statusvariablen oder Profile benötigt.
+Es werden keine zusätzlichen Statusvariablen unf Profile/Darstellungen benötigt.
 
 ### 6. Visualisierung
 
-Es ist keine weitere Steuerung oder gesonderte Darstellung integriert.
+Man kann gesamte Modul (HTML-SDK Support) direkt in der Visualisierung verlinken.
 
 ### 7. PHP-Befehlsreferenz
 
 Das Modul stellt keine direkten Funktionsaufrufe zur Verfügung.
 
 ### 8. Versionshistorie
+
+v2.0.20260713
+
+* _NEU_: Support für TileVisu (Kachel-Visualisierung)
+* _NEU_: Kompatibilität auf IPS 8.1 vereinheitlicht
+* _NEU_: Umstellung auf Strict-Modus (IPSModuleStrict)
+* _NEU_: Modulversion wird in Quellcodesektion angezeigt
+* _FIX_: Modulkonfiguration überarbeitet und vereinheitlicht
+* _FIX_: Interne Bibliotheken überarbeitet
+* _FIX_: Internes Deployment überarbeitet
 
 v1.0.20231206
 
