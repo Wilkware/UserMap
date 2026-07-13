@@ -8,6 +8,8 @@
 
 Das Modul bietet die Möglichkeit, jedem Symcon-Benutzer direkt von der Konsole aus seinen eigenen Standortmarker auf eine interaktive Karte (Symcon User Map) hinzuzufügen.  
 
+![Module-Visu](imgs/user-map.png) 
+
 ## Inhaltverzeichnis
 
 1. [Funktionsumfang](#user-content-1-funktionsumfang)

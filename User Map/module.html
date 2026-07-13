@@ -80,7 +80,7 @@
             font-weight: 700;
         }
 
-        #userlist {
+        #user-list {
             display: none;
             position: absolute;
             right: 0;
@@ -95,18 +95,20 @@
             backdrop-filter: blur(2px);
             border-radius: 4px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
         }
 
-        #userlist.open {
+        #user-list.open {
             display: block;
         }
 
-        #userlist li {
+        #user-list li {
             padding: .4em;
             cursor: pointer;
         }
 
-        #userlist li:hover {
+        #user-list li:hover {
             border-radius: 4px;
             background: var(--accent-color);
         }
@@ -151,14 +153,13 @@
         class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom">
         <div class=leaflet-control-container>
             <div class="leaflet-bottom leaflet-left">
-                <div class="leaflet-control-attribution"><span id=user-count>0</span> registrierte
-                    Nutzer!</div>
+                <div class="leaflet-control-attribution"><span id=user-count>0</span> registrierte Nutzer!</div>
             </div>
         </div>
     </div>
     <div id="user-control">
         <button id="user-toggle" aria-label="Menü öffnen">☰</button>
-        <ul id="userlist"></ul>
+        <ul id="user-list"></ul>
     </div>
     <script>
         fetch("https://wilkware.de/wp-json/usermap/symcon/").then(e => e.json()).then(e => {
@@ -167,7 +168,7 @@
                 attribution: '&copy; OSM contributors'
             }).addTo(n);
             n.on('click', function () {
-                document.getElementById("userlist").classList.remove("open");
+                document.getElementById("user-list").classList.remove("open");
             });
             const s = {}, a = [];
             for (const t of e) {
@@ -184,12 +185,14 @@
                 s[t.name] = i, a.push(t.name)
             }
             document.getElementById("user-toggle").addEventListener("click", function () {
-                document.getElementById("userlist").classList.toggle("open");
+                document.getElementById("user-list").classList.toggle("open");
             });
             document.getElementById("user-count").innerText = String(e.length), a.sort(function (e, t) {
                 return e.toLowerCase().localeCompare(t.toLowerCase())
             });
-            let c = document.getElementById("userlist");
+            const u = document.getElementById("user-list");
+            L.DomEvent.disableClickPropagation(u);
+            L.DomEvent.disableScrollPropagation(u);
             for (const e of a) t = document.createElement("li"), t.innerText = e, t.addEventListener("mouseenter", function () {
                 s[e].openPopup()
             }), t.addEventListener("mouseleave", function () {
@@ -198,7 +201,7 @@
                 i = n.getZoom(), n.flyTo(s[e].getLatLng(), 16)
             }), t.addEventListener("mouseup", function () {
                 n.flyTo(s[e].getLatLng(), i)
-            }), c.appendChild(t)
+            }), u.appendChild(t)
         })
     </script>
 </body>
