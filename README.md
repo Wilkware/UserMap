@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/badge/Symcon-PHP--Modul-red.svg?style=flat-square)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Product](https://img.shields.io/badge/Symcon%20Version-8.1-blue.svg?style=flat-square)](https://www.symcon.de/produkt/)
-[![Version](https://img.shields.io/badge/Modul%20Version-2.0.20260713-orange.svg?style=flat-square)](https://github.com/Wilkware/UserMap)
+[![Version](https://img.shields.io/badge/Modul%20Version-2.0.20260731-orange.svg?style=flat-square)](https://github.com/Wilkware/UserMap)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Actions](https://img.shields.io/github/actions/workflow/status/wilkware/UserMap/ci.yml?branch=main&label=CI&style=flat-square)](https://github.com/Wilkware/UserMap/actions)
 
@@ -81,6 +81,11 @@ Man kann gesamte Modul (HTML-SDK Support) direkt in der Visualisierung verlinken
 Das Modul stellt keine direkten Funktionsaufrufe zur Verfügung.
 
 ### 8. Versionshistorie
+
+v2.0.20260731
+
+* _NEU_: Einführung von namespaced traits
+* _FIX_: Unnötige Bibliotheken entfernt
 
 v2.0.20260713
 

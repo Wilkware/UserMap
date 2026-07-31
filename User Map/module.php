@@ -5,6 +5,10 @@ declare(strict_types=1);
 /** Generell funktions */
 require_once __DIR__ . '/../libs/_traits.php';
 
+/** Namespaced traits */
+use Wilkware\UserMap\DebugHelper;
+use Wilkware\UserMap\VariableHelper;
+
 /**
  * Class UserMap
  */
@@ -15,7 +19,6 @@ class UserMap extends IPSModuleStrict
     // -------------------------------------------------------------------------
 
     use DebugHelper;
-    use ProfileHelper;
     use VariableHelper;
 
     // -------------------------------------------------------------------------
